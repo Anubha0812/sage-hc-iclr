@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.ipynb_checkpoints/
+*.log
+out_*.txt
+err_*.txt
+*.lock
+*.done
+models/
+main_results/
+main_results_test_data/
+benchmark_test_manifests/
+results/

@@ -145,7 +145,6 @@ python analysis/plot_sensitivity.py --help
 
 ```bash
 sbatch experiments/run_sensitivity_fpa.sh
-python analysis/plot_training_fpa_sensitivity.py --help
 ```
 
 The paper figure uses a fixed strict unseen-test budget of `F_test=2` while varying the number of feature realizations available during training.

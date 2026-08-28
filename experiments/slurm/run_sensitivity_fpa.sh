@@ -18,8 +18,8 @@ export CUDA_VISIBLE_DEVICES=0
 export PYTHONUNBUFFERED=1
 
 source "$HOME/miniconda3/etc/profile.d/conda.sh"
-conda activate hidden-cascades
-PYTHON="$HOME/miniconda3/envs/hidden-cascades/bin/python"
+conda activate sage-hc-iclr
+PYTHON="$HOME/miniconda3/envs/sage-hc-iclr/bin/python"
 
 PROJECT_DIR="${SAGE_HC_ROOT:-${SLURM_SUBMIT_DIR:-$PWD}}"
 export PYTHONPATH="$PROJECT_DIR:$PROJECT_DIR/core"

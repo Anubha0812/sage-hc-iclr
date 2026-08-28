@@ -14,3 +14,4 @@ benchmark_test_manifests/
 results/
 data/graphs/progressive*
 data/features
+.vscode

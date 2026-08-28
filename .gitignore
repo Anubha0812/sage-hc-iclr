@@ -12,3 +12,5 @@ main_results/
 main_results_test_data/
 benchmark_test_manifests/
 results/
+data/graphs/progressive*
+data/features

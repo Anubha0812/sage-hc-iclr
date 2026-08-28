@@ -1499,6 +1499,11 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         choices=("random", "karate", "facebook", "insider", "tree"),
         default="random",
     )
+    parser.add_argument(
+        "--graph-path",
+        "--graph_path",
+        default=None,
+    )
     parser.add_argument("--seed-percentage", "--seed_percentage", type=float, default=1.0)
     parser.add_argument("--train-fraction", "--train_fraction", type=float, default=0.7)
     parser.add_argument("--validation-fraction", "--validation_fraction", type=float, default=0.15)
@@ -1619,8 +1624,9 @@ def _validate_arguments(args: argparse.Namespace) -> None:
             )
 
 
-def main(argv: Optional[Sequence[str]] = None) -> int:
-    args = parse_args(argv)
+def main(argv: Optional[Sequence[str]] = None, args=None) -> int:
+    if args is None:
+        args = parse_args(argv)
     if args.self_test:
         run_self_test()
         return 0
@@ -1661,7 +1667,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         graph_name=args.graph_name,
         node_count=effective_node_count,
         connections_per_node=args.connections_per_node,
-        graph_path=paths.graph_path,
+        graph_path=paths.graph_path if args.graph_path is None else Path(args.graph_path),
         graph_folder=args.graph_folder,
         data_seed=args.data_seed,
         force_graph=args.force_graph,

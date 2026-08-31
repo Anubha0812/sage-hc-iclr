@@ -4,6 +4,173 @@ Code accompanying the anonymous submission **“Gated Graph Neural Networks for 
 
 SAGE-HC estimates heterogeneous node-level Independent Cascade susceptibilities from known seed sets and noisy terminal symptom observations. Repeated hidden-cascade observations are summarized as **Symptom-Aware Cascade Features (SACF)** and processed by a residual gated graph neural network.
 
+
+## Installation
+
+Use 
+
+```bash
+bash -i install.sh
+```
+
+to create a `conda` environment and install torch and related dependencies. Alternatively, install dependencies with `pip`:
+
+```bash
+pip install -r requirements.txt
+```
+
+
+## Running experiments
+
+You can run experiments using the following python/bash scripts. Alternatively, you can use SLURM scripts from `experiments/slurm`. See [Slurm README](experiments/slurm/README.MD) for details.
+
+
+### Create features
+
+Create features from the paper by using
+```bash
+bash experiments/generate_main_master.sh 
+```
+
+or create a small test feature set by using
+
+```bash
+bash experiments/generate_main_master.sh small-test
+```
+
+### Main benchmark — Tables 2 and 3
+
+Run the full benchmark by running
+```bash
+bash experiments/run_benchmark.sh 
+```
+
+or use the small test set by using
+
+```bash
+bash experiments/run_benchmark.sh small-test
+```
+
+Compile the benchmark and empirical prediction-stability summaries with:
+
+```bash
+python analysis/compile_benchmark_tables.py --log-dir=./main_results
+```
+or for a small test:
+```bash
+python analysis/compile_benchmark_tables.py --log-dir=./main_results --assignments=10
+```
+
+### Figure 1 — sensitivity to susceptibility assignments
+
+```bash
+bash experiments/run_sensitivity_assignments.sh
+```
+
+or a small test with
+
+```bash
+bash experiments/run_sensitivity_assignments.sh small-test
+```
+
+### Figure 2 — sensitivity to cascades per seed
+
+```bash
+bash experiments/run_sensitivity_cascades.sh
+```
+
+or a small test with
+
+```bash
+bash experiments/run_sensitivity_cascades.sh small-test
+```
+### Figure 3 — sensitivity to graph size
+
+```bash
+bash experiments/run_sensitivity_nodes.sh
+```
+
+or a small test with
+
+```bash
+bash experiments/run_sensitivity_nodes.sh small-test
+```
+
+Figures 1–3 are generated from completed sensitivity logs using:
+
+```bash
+python analysis/plot_sensitivity.py
+```
+
+### Figure 4 — training feature realizations with fixed test FPA
+
+```bash
+bash experiments/run_sensitivity_fpa.sh
+```
+
+or a small test with
+
+```bash
+bash experiments/run_sensitivity_fpa.sh small-test
+```
+
+
+The paper figure uses a fixed strict unseen-test budget of `F_test=2` while varying the number of feature realizations available during training.
+
+### Figure 5 — generalization across test-time cascade budgets
+
+```bash
+bash experiments/run_cross_cascade_generalization.sh
+```
+```bash
+python analysis/plot_test_cascade_generalization.py
+```
+
+or a small test with
+
+```bash
+bash experiments/run_cross_cascade_generalization.sh small-test
+```
+```bash
+python analysis/plot_test_cascade_generalization.py small-test
+```
+
+The model is trained once at `C_train=1000` cascades per seed and evaluated, without retraining, over smaller and larger test-time cascade budgets.
+
+### Figure 6 — noise robustness
+
+Noise robustness is tested by first creating a progressive set of graphs based on a tree graph
+
+```bash
+python core/create_progressive_graphs.py --graph_path=./data/graphs/graph_tree.pkl --graph_folder=./data/graphs --edges_per_step=100 --node_count=100
+```
+
+then creating the feature sets for each graph
+
+```bash
+bash experiments/simulate_progressive_tree.sh
+```
+
+and training the models for each feature set
+
+```bash
+bash experiments/train_progressive_tree.sh
+```
+
+for a single-gpu training and
+
+```bash
+bash experiments/train_progressive_tree.sh 8 2
+```
+
+to train on 8 gpus with 2 processes for each GPU.
+
+Results of training you can see by running
+```bash
+python analysis/collect_results_progressive.py
+```
+
+
 ## Paper setting reproduced by this repository
 
 The main benchmark uses:
@@ -29,7 +196,7 @@ Two observation regimes are used:
 | Hidden/noisy | `p1=0.2` | `p2=0.2` | `q=0.6` |
 
 The main benchmark covers the balanced tree, Karate Club, BA(2), BA(3), and BA(4) graphs.
-
+<!-- 
 ## Repository structure
 
 ```text
@@ -60,9 +227,7 @@ sage-hc-iclr/
 │   ├── plot_training_fpa_sensitivity.py
 │   └── plot_test_cascade_generalization.py
 └── data/graphs/
-```
-
-`core/main_hybrid_split_v7_sensitivity_nested_fpa.py` is retained only because the finalized FPA launcher checks for that compatibility filename.
+``` -->
 
 ## SACF features
 
@@ -101,95 +266,6 @@ Final benchmark metrics are reported only on strict unseen-test assignments.
 
 Input-feature normalization uses means and standard deviations estimated from training samples only and applies those statistics unchanged to validation and test samples.
 
-## Running experiments
-
-You can run experiments using the following python/bash scripts. Alternatively, you can use SLURM scripts from `experiments/slurm`. See [Slurm README](experiments/slurm/README.MD) for details.
-
-### Main benchmark — Tables 2 and 3
-
-```bash
- experiments/run_benchmark.sh
-```
-
-Compile the benchmark and empirical prediction-stability summaries with:
-
-```bash
-python analysis/compile_benchmark_tables.py --help
-```
-
-### Figure 1 — sensitivity to susceptibility assignments
-
-```bash
- experiments/run_sensitivity_assignments.sh
-```
-
-### Figure 2 — sensitivity to cascades per seed
-
-```bash
- experiments/run_sensitivity_cascades.sh
-```
-
-### Figure 3 — sensitivity to graph size
-
-```bash
- experiments/run_sensitivity_nodes.sh
-```
-
-Figures 1–3 are generated from completed sensitivity logs using:
-
-```bash
- analysis/plot_sensitivity.py --help
-```
-
-### Figure 4 — training feature realizations with fixed test FPA
-
-```bash
- experiments/run_sensitivity_fpa.sh
-```
-
-The paper figure uses a fixed strict unseen-test budget of `F_test=2` while varying the number of feature realizations available during training.
-
-### Figure 5 — generalization across test-time cascade budgets
-
-```bash
- experiments/run_cross_cascade_generalization.sh
-python analysis/plot_test_cascade_generalization.py --help
-```
-
-The model is trained once at `C_train=1000` cascades per seed and evaluated, without retraining, over smaller and larger test-time cascade budgets.
-
-### Figure 6 — noise robustness
-
-Noise robustness is tested by first creating a progressive set of graphs based on a tree graph
-
-```bash
-python core/create_progressive_graphs.py --graph_path=./data/graphs/graph_tree.pkl --graph_folder=./data/graphs --edges_per_step=100 --node_count=100
-```
-
-then creating the feature sets for each graph
-
-```bash
-bash experiments/simulate_progressive_tree.sh
-```
-
-and training the models for each feature set
-
-```bash
-bash experiments/train_progressive_tree.sh
-```
-
-for a single-gpu training and
-
-```bash
-bash experiments/train_progressive_tree.sh 8 2
-```
-
-to train on 8 gpus with 2 processes for each GPU.
-
-Results of training you can see by running
-```bash
-python analysis/collect_results_progressive.py
-```
 
 ## Evaluation metrics
 
@@ -208,14 +284,6 @@ mean_prediction +/- 1.96 * prediction_std / sqrt(number_of_realizations)
 
 with endpoints clipped to `[0,1]`. These are empirical stability intervals, not formally calibrated confidence intervals.
 
-## Dependencies
-
-Install the Python dependencies with:
-
-```bash
-pip install -r requirements.txt
-```
-
 Data generation additionally expects the `cascadesimulator` module providing `pyCascadeGenerator`. This module is not bundled in the current archive and must be available in the Python environment before running the simulation scripts.
 
 ## Data
@@ -226,4 +294,4 @@ The balanced-tree graph stored in `data/graphs/graph_tree.pkl` has 100 nodes and
 
 ## Reproducibility notes
 
-Random seeds are fixed for assignment-subset selection, assignment-aware splitting, and independent model runs. The repository intentionally removes local logs, lock files, cached Python bytecode, macOS metadata, obsolete model families, and duplicate analysis scripts that are not required for the experiments reported in the paper.
+Random seeds are fixed for assignment-subset selection, assignment-aware splitting, and independent model runs. The tests are done in Ubuntu 24.04.3 LTS with 8x2080Ti GPUs, 50-core Intel CPU and 188GB of RAM.

@@ -43,9 +43,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-DEFAULT_ROOT = Path("/scratch/svc_td_fincomp/vrango/hic_new/sensitivity_ba2")
+DEFAULT_ROOT = Path("./results")
 
-CASE_ORDER = ("assignments", "fpa", "cascades", "nodes")
+# CASE_ORDER = ("assignments", "fpa", "cascades", "nodes")
+CASE_ORDER = ("assignments", "cascades", "nodes")
 CASES: Dict[str, Dict[str, str]] = {
     "assignments": {
         "panel_title": "Assignments",
@@ -277,7 +278,7 @@ def parse_log(case: str, path: Path) -> Result:
 
 
 def collect_case(case: str, root: Path) -> Tuple[List[Result], List[str]]:
-    log_dir = root / case / "logs"
+    log_dir = root / ("sensitivity_" + case) / "logs"
     if not log_dir.is_dir():
         raise FileNotFoundError(f"Log directory not found: {log_dir}")
 

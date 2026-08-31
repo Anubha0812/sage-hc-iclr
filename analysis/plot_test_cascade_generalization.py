@@ -33,11 +33,11 @@ from typing import Dict, List, Mapping, Sequence, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
+from fire import Fire
 
 
 DEFAULT_ROOT = Path(
-    "/scratch/svc_td_fincomp/vrango/hic_new/"
-    "cross_cascade_generalization_fpa2_trainc1000"
+    "./results/cross_cascade_generalization"
 )
 CASCADE_ORDER = [5, 10, 50, 100, 500, 700, 1000]
 NOISE_ORDER = ("nop", "p020_q060")
@@ -362,14 +362,19 @@ def save_combined(
     return pdf_path, png_path
 
 
-def main() -> int:
-    args = parse_args()
-    root = args.root.expanduser().resolve()
-    output_dir = (
-        args.output_dir.expanduser().resolve()
-        if args.output_dir is not None
-        else root / "plots"
-    )
+
+
+def main(mode="normal", root=DEFAULT_ROOT, output_dir=None, dpi=300, show=False) -> int:
+
+    global CASCADE_ORDER
+
+    if mode == "small-test":
+        print("Running in small-test mode: using small values for training/testing.")
+        CASCADE_ORDER = [5, 50]
+
+    if output_dir is None:
+        output_dir = root / "plots"
+
     output_dir.mkdir(parents=True, exist_ok=True)
 
     configure_matplotlib()
@@ -383,22 +388,22 @@ def main() -> int:
     save_combined(
         data=data,
         output_dir=output_dir,
-        dpi=args.dpi,
-        show=args.show,
+        dpi=dpi,
+        show=show,
     )
     save_single_metric(
         data=data,
         metric="l1",
         output_dir=output_dir,
-        dpi=args.dpi,
-        show=args.show,
+        dpi=dpi,
+        show=show,
     )
     save_single_metric(
         data=data,
         metric="acc@0.1",
         output_dir=output_dir,
-        dpi=args.dpi,
-        show=args.show,
+        dpi=dpi,
+        show=show,
     )
 
     csv_path = output_dir / "cross_cascade_trainC1000_fpa2_plot_data.csv"
@@ -409,4 +414,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    Fire(main)

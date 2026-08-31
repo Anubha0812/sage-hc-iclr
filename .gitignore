@@ -15,3 +15,4 @@ results/
 data/graphs/progressive*
 data/features
 .vscode
+benchmark_tables

@@ -12,7 +12,7 @@ sbatch experiments/run_benchmark.sh
 Compile the benchmark and empirical prediction-stability summaries with:
 
 ```bash
-python analysis/compile_benchmark_tables.py --help
+python analysis/compile_benchmark_tables.py
 ```
 
 ### Figure 1 — sensitivity to susceptibility assignments
@@ -36,7 +36,7 @@ sbatch experiments/run_sensitivity_nodes.sh
 Figures 1–3 are generated from completed sensitivity logs using:
 
 ```bash
-python analysis/plot_sensitivity.py --help
+python analysis/plot_sensitivity.py
 ```
 
 ### Figure 4 — training feature realizations with fixed test FPA
@@ -51,7 +51,7 @@ The paper figure uses a fixed strict unseen-test budget of `F_test=2` while vary
 
 ```bash
 sbatch experiments/run_cross_cascade_generalization.sh
-python analysis/plot_test_cascade_generalization.py --help
+python analysis/plot_test_cascade_generalization.py
 ```
 
 The model is trained once at `C_train=1000` cascades per seed and evaluated, without retraining, over smaller and larger test-time cascade budgets.

@@ -408,7 +408,7 @@ def create_hybrid_split(
     n_train = features_per_assignment - n_seen_validation - n_seen_test
     if n_train < 1:
         raise ValueError(
-            "The seen validation/test fractions leave no training realizations."
+            f"The seen validation/test fractions leave no training realizations. n_train={n_train} < 1. features_per_assignment={features_per_assignment}, seen_validation_fraction={seen_validation_fraction}, seen_test_fraction={seen_test_fraction}."
         )
 
     train_indices: List[int] = []
